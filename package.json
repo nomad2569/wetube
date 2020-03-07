@@ -2,11 +2,15 @@
   "name": "wetube-clone",
   "version": "1.0.0",
   "description": "Cloning Youtube with Vanilla and NodeJS",
-  "main": "index.js",
+  "main": "init.js",
+  "build": "cross-env NODE_ENV=production webpack --config build/webpack.config.js",
   "scripts": {
-    "start": "nodemon --exec babel-node init.js --delay 2"
+    "dev:server": "nodemon --exec babel-node init.js --delay 2",
+    "dev:assets": "set WEBPACK_ENV=development&&webpack",
+    "build:assets": "set WEBPACK_ENV=production&&webpack"
   },
   "devDependencies": {
+    "eslint": "^6.8.0",
     "nodemon": "^1.19.4"
   },
   "author": "Minkyu Kim",
@@ -15,10 +19,27 @@
     "@babel/core": "^7.8.4",
     "@babel/node": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
+    "autoprefixer": "^9.7.4",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
+    "cross-env": "^7.0.0",
+    "css-loader": "^3.4.2",
+    "dotenv": "^8.2.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
     "express": "^4.17.1",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "helmet": "^3.21.2",
-    "morgan": "^1.9.1"
+    "mongodb": "^3.5.3",
+    "mongoose": "^5.9.1",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.2",
+    "node-sass": "^4.13.1",
+    "postcss-loader": "^3.0.0",
+    "pug": "^2.0.4",
+    "sass-loader": "^8.0.2",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11",
+    "wepack-cli": "0.0.1-security"
   }
 }
