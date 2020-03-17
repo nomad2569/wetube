@@ -1,10 +1,12 @@
+import passport from "passport";
 import routes from "../routes";
+import User from "../models/user";
 
 export const getJoin = (req, res) => {
   res.render("join", { pageTitle: "Join" });
 };
 
-export const postJoin = (req, res) => {
+export const postJoin = async (req, res, next) => {
   const {
     body: { name, email, password, password2 }
   } = req;
@@ -15,18 +17,29 @@ export const postJoin = (req, res) => {
     //이런 오류에 해당하는 code가 400
     res.render("join", { pageTitle: "Join" });
   } else {
-    //To Do: Register User 사용자 등록해야 함.
+    try {
+      const user = await User({
+        name,
+        email
+      });
+      console.log(user);
+
+      await User.register(user, password);
+      next();
+    } catch (error) {
+      console.log(error);
+      res.redirect(routes.home);
+    }
     //To Do: Log user in
-    res.redirect(routes.home);
   }
 };
 
 export const getLogin = (req, res) =>
   res.render("login", { pageTitle: "Login" });
-export const postLogin = (req, res) => {
-  // db의 데이터와 확인 시켜야함.
-  res.redirect(routes.home);
-};
+export const postLogin = passport.authenticate("local", {
+  failureRedirect: routes.login,
+  successRedirect: routes.home
+});
 
 export const logout = (req, res) => {
   // 로그아웃 시키는 작업 해야함
