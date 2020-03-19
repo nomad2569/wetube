@@ -43,7 +43,9 @@ export const postLogin = passport.authenticate("local", {
 
 export const logout = (req, res) => {
   // 로그아웃 시키는 작업 해야함
-  res.render(routes.home);
+
+  req.logout();
+  res.redirect(routes.home);
 };
 
 export const users = (req, res) => res.render("users", { pageTitle: "Users" });

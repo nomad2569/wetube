@@ -4,7 +4,8 @@ import {
   users,
   userDetail,
   editProfile,
-  changePassword
+  changePassword,
+  logout
 } from "../controller/userController";
 import { onlyPrivate } from "../middlewares";
 
