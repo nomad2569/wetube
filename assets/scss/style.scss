@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500,700&display=swap");
+
 @import "config/_variables.scss";
 @import "config/reset.scss";
 @import "main.scss";
@@ -6,3 +8,13 @@
 @import "partials/videoPlayer.scss";
 @import "partials/videoBlock.scss";
 @import "partials/videoRecorder.scss";
+@import "pages/userProfile.scss";
+@import "pages/home.scss";
+@import "pages/videoDetail.scss";
+@import "pages/upload.scss";
+@import "partials/socialLogin.scss";
+
+body {
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+}

@@ -41,17 +41,82 @@ export const postLogin = passport.authenticate("local", {
   successRedirect: routes.home
 });
 
+export const githubLogin = passport.authenticate("github");
+
+export const githubLoginCallback = async (_, __, profile, cb) => {
+  const {
+    _json: { id, avatar_url, email, name }
+  } = profile;
+  if (email === null) return cb(error, null);
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
+      user.githubId = id;
+      user.save();
+      return cb(null, user);
+    } else {
+      const newUser = await User.create({
+        email,
+        name,
+        githubId: id,
+        avatarUrl: avatar_url
+      });
+      return cb(null, newUser);
+    }
+  } catch (error) {
+    return cb(error);
+  }
+};
+
+export const postGithubLogin = (req, res) => {
+  res.redirect(routes.home);
+};
+
 export const logout = (req, res) => {
   // 로그아웃 시키는 작업 해야함
-
   req.logout();
   res.redirect(routes.home);
 };
 
 export const users = (req, res) => res.render("users", { pageTitle: "Users" });
-export const userDetail = (req, res) =>
-  res.render("userDetail", { pageTitle: "User Detail" });
-export const editProfile = (req, res) =>
+
+export const getMe = async (req, res) => {
+  console.log("getMe @@@@@@@@@@@@@@@@@@@@@@@@@");
+  res.render("userDetail", { pageTitle: "User Detail", user: req.user });
+};
+
+export const userDetail = async (req, res) => {
+  const {
+    params: { id }
+  } = req;
+
+  try {
+    const user = await User.findById(id);
+    res.render("userDetail", { pageTitle: "User Detail", user });
+  } catch (error) {
+    console.log("랄랄랄");
+  }
+};
+export const getEditProfile = (req, res) =>
   res.render("editProfile", { pageTitle: "Edit Profile" });
+
+export const postEditProfile = async (req, res) => {
+  const {
+    body: { name },
+    file
+  } = req;
+  try {
+    await User.findByIdAndUpdate(req.user.id, {
+      name,
+      avatarUrl: file ? file.path : req.user.avatarUrl
+    });
+    console.log("postEditProfile★★★★★★★★★★★★");
+    res.redirect(routes.me);
+  } catch (error) {
+    console.log(error);
+    res.render("editProfile", { pageTitle: "Edit Profile" });
+  }
+};
+
 export const changePassword = (req, res) =>
   res.render("changePassword", { pageTitle: "Change Password" });

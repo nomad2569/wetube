@@ -1,11 +1,23 @@
-const videoContainer = document.getElementById("jsVideoPlayer");
+const videoContainer = document.querySelector(".videoPlayer");
 const videoPlayer = document.querySelector("#jsVideoPlayer video");
 const playBtn = document.getElementById("jsPlayButton");
+const videoController = document.getElementsByClassName(
+  "videoPlayer__controls"
+);
 const volumeBtn = document.getElementById("jsVolumeButton");
 const fullScrnBtn = document.getElementById("jsFullScreen");
 const currentTime = document.getElementById("currentTime");
 const totalTime = document.getElementById("totalTime");
 const volumeRange = document.getElementById("jsVolume");
+const progressBar = document.querySelector(".videoPlayer__progress");
+const progressBarWrapper = document.querySelector(".progress-wrapper");
+
+const registerView = (req, res) => {
+  const videoId = window.location.href.split("/videos/")[1];
+  fetch(`/api/${videoId}/view`, {
+    method: "POST"
+  });
+};
 
 function handleVolumeClick() {
   if (videoPlayer.muted) {
@@ -62,14 +74,45 @@ const formatDate = seconds => {
 function setTotalTime() {
   const totalTimeString = formatDate(videoPlayer.duration);
   totalTime.innerHTML = totalTimeString;
-  setInterval(getCurrentTime, 1000);
+  setInterval(getCurrentTime, 100);
+}
+
+function disappearControl(event) {
+  const movement = event.movementX + event.movementY;
+  setTimeout(() => {
+    if (movement < 100) {
+      videoController.classList.add("noCursor");
+      videoContainer.classList.add("zeroOpacity");
+    }
+  }, 2000);
+
+  videoController.classList.remove("noCursor");
+  videoContainer.classList.remove("zeroOpacity");
+}
+
+function handleSpace(event) {
+  if (event.keyCode === 32) {
+    event.preventDefault();
+    handlePlayClick();
+  }
+}
+
+function changeCurrentTime(event) {
+  handlePlayClick();
+
+  const scrubTime =
+    (event.offsetX / progressBar.offsetWidth) * videoPlayer.duration;
+  videoPlayer.currentTime = scrubTime;
+  handlePlayClick();
 }
 
 function getCurrentTime() {
   currentTime.innerHTML = formatDate(Math.floor(videoPlayer.currentTime));
+  progressBar.value = videoPlayer.currentTime / videoPlayer.duration;
 }
 
 function handleEnded() {
+  registerView();
   videoPlayer.currentTime = 0;
   playBtn.innerHTML = '<i class="fas fa-play"></i>';
 }
@@ -90,6 +133,7 @@ function handleDrag(event) {
 
 function init() {
   videoPlayer.volume = 0.5;
+  videoPlayer.addEventListener("click", handlePlayClick);
   playBtn.addEventListener("click", handlePlayClick);
   volumeBtn.addEventListener("click", handleVolumeClick);
   fullScrnBtn.addEventListener("click", goFullScreen);
@@ -97,6 +141,11 @@ function init() {
   videoPlayer.addEventListener("loadedmetadata", setTotalTime);
   videoPlayer.addEventListener("finished", handleEnded);
   volumeRange.addEventListener("input", handleDrag);
+  videoPlayer.addEventListener("ended", handleEnded);
+  progressBar.addEventListener("click", changeCurrentTime);
+  //videoPlayer.addEventListener("mousemove", disappearControl);
+
+  document.addEventListener("keydown", handleSpace);
 }
 
 if (videoContainer) {

@@ -6,8 +6,8 @@ block content
             video#jsVideoPreview
             button#jsRecordBtn Start Recording
         form(action=`/videos${routes.upload}`, method="post", enctype="multipart/form-data")
-            .filrUpload
-                label(for="file") Video File
+            .fileUpload
+                label(for="file") Select Video File
                 input(type="file",id="file",name="file", required=true, accept="video/*")
             input(type="text",placeholder="Title",name="title", required=true)
             textarea(name="description", placeholder="Description", required=true)
