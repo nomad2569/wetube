@@ -1,12 +1,22 @@
 extends layouts/main
+include mixins/videoBlock
+
 
 block content 
     .user-profile
         .user-profile__header
             img.avatar(src=user.avatarUrl)
             h4.profile__username=user.name
-            if user.id === loggedUser.id
+            if user.id === (loggedUser && loggedUser.id)
                 a(href=`/users${routes.editProfile}`)
                     button.profile__edit-profile 🛠 Edit Profile
                 a(href=`/users${routes.changePassword}`)    
                     button.profile__change-password 🗝 Change Password
+            .uploaded-videos
+                each video in user.videos
+                    +videoBlock({
+                        id:video.id,
+                        title:video.title,
+                        views:video.views,
+                        videoFile:video.fileUrl
+                    })

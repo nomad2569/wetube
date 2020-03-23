@@ -1,6 +1,6 @@
 mixin videoPlayer(video = {})
     div.videoPlayer#jsVideoPlayer
-        video.videoPlayer__video(src=`/${video.src}`,preload="metadata",data-setup='{"fluid": true}')
+        video.videoPlayer__video(src=video.src,preload="metadata",data-setup='{"fluid": true}')
         progress.videoPlayer__progress(value="0",max="1",)
         .videoPlayer__controls
             .videoPlayer__column

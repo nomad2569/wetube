@@ -37,13 +37,16 @@ export const getUpload = (req, res) =>
 export const postUpload = async (req, res) => {
   const {
     body: { file, title, description },
-    file: { path }
+    file: { location }
   } = req;
   const newVideo = await Video.create({
-    fileUrl: path,
+    fileUrl: location,
     title,
-    description
+    description,
+    creator: req.user.id
   });
+  req.user.videos.push(newVideo.id);
+  req.user.save();
   console.log(newVideo);
 
   // 할 일 : 비디오 업로드 및 저장
@@ -57,7 +60,10 @@ export const videoDetail = async (req, res) => {
   try {
     const video = await Video.findById(id)
       .populate("creator")
-      .populate("comments");
+      .populate({
+        path: "comments",
+        populate: { path: "creator", select: "name avatarUrl" }
+      });
     res.render("videoDetail", { pageTitle: video.title, video });
   } catch (error) {
     console.log(error);
@@ -88,7 +94,11 @@ export const getEditVideo = async (req, res) => {
   } = req;
   try {
     const video = await Video.findById(id);
-    res.render("editVideo", { pageTitle: `Edit ${video.title}`, video });
+    if (video.creator !== req.user.id) {
+      throw Error();
+    } else {
+      res.render("editVideo", { pageTitle: `Edit ${video.title}`, video });
+    }
   } catch {
     res.render("editVideo", { pageTitle: "Edit Video", video });
   }
@@ -99,8 +109,15 @@ export const deleteVideo = async (req, res) => {
     params: { id }
   } = req;
   try {
-    await Video.findOneAndRemove({ _id: id });
-  } catch (error) {}
+    const video = await Video.findById(id);
+    if (video.creator !== req.user.id) {
+      throw Error();
+    } else {
+      await Video.findOneAndRemove({ _id: id });
+    }
+  } catch (error) {
+    console.log(error);
+  }
   res.redirect(routes.home);
 };
 
