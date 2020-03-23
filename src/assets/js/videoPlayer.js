@@ -74,9 +74,11 @@ const formatDate = seconds => {
 };
 
 async function setTotalTime() {
-  const blob = await fetch(videoPlayer.src).then(response => response.blob());
-  const duration = await getBlobDuration(blob);
-  const totalTimeString = formatDate(duration);
+  if (videoPlayer.duration === undefined) {
+    const blob = await fetch(videoPlayer.src).then(response => response.blob());
+    const duration = await getBlobDuration(blob);
+  }
+  const totalTimeString = formatDate(videoPlayer.duration || duration);
   totalTime.innerHTML = totalTimeString;
   setInterval(getCurrentTime, 100);
 }
@@ -103,10 +105,14 @@ function handleSpace(event) {
 
 async function changeCurrentTime(event) {
   handlePlayClick();
+  if (videoPlayer.duration === undefined) {
+    const blob = await fetch(videoPlayer.src).then(response => response.blob());
+    const duration = await getBlobDuration(blob);
+  }
 
-  const blob = await fetch(videoPlayer.src).then(response => response.blob());
-  const duration = await getBlobDuration(blob);
-  const scrubTime = (event.offsetX / progressBar.offsetWidth) * duration;
+  const scrubTime =
+    (event.offsetX / progressBar.offsetWidth) *
+    (videoPlayer.duration || duration);
   videoPlayer.currentTime = scrubTime;
   handlePlayClick();
 }
