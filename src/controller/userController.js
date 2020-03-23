@@ -1,6 +1,6 @@
 import passport from "passport";
 import routes from "../routes";
-import User from "../models/user";
+import User from "../models/User";
 
 export const getJoin = (req, res) => {
   res.render("join", { pageTitle: "Join" });
