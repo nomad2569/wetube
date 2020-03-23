@@ -4,11 +4,18 @@
   "description": "Cloning Youtube with Vanilla and NodeJS",
   "build": "cross-env NODE_ENV=production webpack --config build/webpack.config.js",
   "scripts": {
-    "dev:server": "nodemon --exec babel-node init.js --delay 2",
-    "dev:assets": "set WEBPACK_ENV=development&&webpack -w",
-    "build:assets": "set WEBPACK_ENV=production&&webpack"
+    "dev:server": "nodemon --exec babel-node src/init.js --delay 2",
+    "dev:assets": " cd src&&set WEBPACK_ENV=development&&webpack -w",
+    "build:assets": "cd src&&set WEBPACK_ENV=production&&webpack",
+    "build:server": "babel src --out-dir build --ignore 'src/assets','src/static','src/webpack.config.js",
+    "copyAll": "xcopy .\\src\\static .\\build\\static\\ /s /y && xcopy .\\src\\views .\\build\\views\\ /s /y",
+    "build": "npm run build:server && npm run build:assets && npm run copyAll",
+    "prebuild": "rd /s /q build",
+    "start": "node build/init.js",
+    "prestart": "npm run build"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
     "eslint": "^6.8.0",
     "nodemon": "^1.19.4"
   },
@@ -25,6 +32,7 @@
     "axios": "^0.19.2",
     "babel-loader": "^8.0.6",
     "body-parser": "^1.19.0",
+    "brew": "0.0.8",
     "connect-mongo": "^3.2.0",
     "cookie-parser": "^1.4.4",
     "cross-env": "^7.0.0",

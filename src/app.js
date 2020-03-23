@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import passport from "passport";
 import mongoose from "mongoose";
 import session from "express-session";
+import path from "path";
 import MongoStroe from "connect-mongo";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
@@ -21,9 +22,9 @@ const app = express();
 const CokieStore = MongoStroe(session);
 
 app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
 
-app.use("/uploads", express.static("uploads"));
-app.use("/static", express.static("static"));
+app.use("/static", express.static(path.join(__dirname, "static")));
 app.use(helmet()); // 보안 담당
 app.use(cookieParser()); //서버가 쿠키를 이해하도록 한다
 app.use(bodyParser.json()); // 서버가 json을 이해
